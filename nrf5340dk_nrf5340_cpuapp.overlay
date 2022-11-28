@@ -22,7 +22,7 @@ my_spi_master: &spi4 {
   status = "okay";
   pinctrl-0 = <&spi_master_default>;
   pinctrl-1 = <&spi_master_sleep>;
-  cs-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+  cs-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
   reg_my_spi_master: spi-dev-a@0 {
     reg = <0>;
   };

@@ -44,7 +44,7 @@ static const struct spi_config spi_cfg = {
 								 SPI_MODE_CPHA,
 		.frequency = 500000,
 		.slave = 0,
-		.cs = NULL,
+		.cs = &spim_cs,
 };
 
 static int spi_write_test_msg(uint8_t *i, int n)
@@ -68,7 +68,7 @@ static int spi_write_test_msg(uint8_t *i, int n)
 			.count = 1};
 
 	// Update the TX buffer with a rolling counter
-	printk("SPI TX: 0x%.2x, 0x%.2x\n", i[0], i[1]);
+	printk("SPI TX: 0x%.2x, 0x%.2x\n", i[0], i[1], i[2]);
 
 	int ret = gpio_pin_configure_dt(&spim_cs, GPIO_ACTIVE_LOW);
 	if (ret < 0)
