@@ -1,4 +1,5 @@
 import customtkinter
+from tkinter import Menu
 
 # local
 from model import Model

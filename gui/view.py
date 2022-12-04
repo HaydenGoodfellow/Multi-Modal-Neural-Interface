@@ -10,22 +10,37 @@ from matplotlib.backends.backend_tkagg import (
     NavigationToolbar2Tk
 )
 
+from components.tabmenu import TabMenu
+from components.tabs.connections import ConnectionsTab
+from components.tabs.recording import RecordingTab
+
 matplotlib.use('TkAgg')
 
 class View(customtkinter.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.width = parent.width
+        self.height = parent.height
         
-        self.configure(width=parent.width, height=parent.height)
+        self.configure(width=self.width, height=self.height)
 
-        x = np.linspace(0, 5, 100)
-        y = np.zeros(100)
+        self.tablists = TabMenu(self)
 
-        self.eeg_plot = customtkinter.CTkFrame(self)
+        self.connections_frame = ConnectionsTab(self.tablists.connections_tab, width=self.width, height=self.height)
 
-        self.plotting(self.eeg_plot, "EEG Readings", 'Time (seconds)', 'Units', x, y)
+        self.recording_frame = RecordingTab(self.tablists.connections_tab, width=self.width, height=self.height)
 
-        self.eeg_plot.grid(row=0, column=0, columnspan=8, sticky=customtkinter.EW)
+        self.tablists.pack(padx=20, pady=20)
+
+        # x = np.linspace(0, 5, 100)
+        # y = np.zeros(100)
+
+        # self.eeg_plot = customtkinter.CTkFrame(self)
+
+        # self.plotting(self.eeg_plot, "EEG Readings", 'Time (seconds)', 'Units', x, y)
+
+        # self.eeg_plot.grid(row=0, column=0, columnspan=8, sticky=customtkinter.EW)
 
     def set_controller(self, controller):
         """
