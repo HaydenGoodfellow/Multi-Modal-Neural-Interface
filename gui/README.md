@@ -9,7 +9,7 @@ Requirements:
 pip install -r requirements.txt
 
 ### To start the gui run:
-py index.py
+py app.py
 
 ## Recording Page:
 ![](assets/graphs.JPG)
