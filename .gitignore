@@ -1,4 +1,5 @@
 .vscode
 gui/venv
-gui/__pycache__/
-gui/components/__pycache__/
+gui/__pycache__
+gui/components/__pycache__
+gui/components/tabs/__pycache__
