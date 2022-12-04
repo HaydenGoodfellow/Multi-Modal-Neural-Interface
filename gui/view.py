@@ -27,9 +27,9 @@ class View(customtkinter.CTkFrame):
 
         self.tablists = TabMenu(self)
 
-        self.connections_frame = ConnectionsTab(self.tablists.connections_tab, width=self.width, height=self.height)
+        self.connections_frame = ConnectionsTab(self, width=self.width, height=self.height)
 
-        self.recording_frame = RecordingTab(self.tablists.connections_tab, width=self.width, height=self.height)
+        self.recording_frame = RecordingTab(self, width=self.width, height=self.height)
 
         self.tablists.pack(padx=20, pady=20)
 

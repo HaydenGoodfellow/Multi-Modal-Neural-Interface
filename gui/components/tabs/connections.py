@@ -3,7 +3,7 @@ import tkinter as tk
 
 class ConnectionsTab(customtkinter.CTkFrame):
     def __init__(self, parent, width, height):
-        super().__init__(parent, width, height)
+        super().__init__(parent.tablists.connections_tab, width, height)
 
         self.label1 = customtkinter.CTkLabel(master=self, 
             text="Connect to an available device...", 
