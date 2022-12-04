@@ -13,7 +13,7 @@ class App(customtkinter.CTk):
         customtkinter.set_default_color_theme("dark-blue")  
         customtkinter.set_appearance_mode("dark")
 
-        self.width = 1080
+        self.width = 1350
         self.height = 720
 
         self.title("Multi-Modal Neural Interface Sample")

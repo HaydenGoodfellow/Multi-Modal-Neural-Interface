@@ -1,5 +1,12 @@
 import customtkinter
 import tkinter as tk
+from tkinter import ttk
+import numpy as np
+from components.tabs.plot import Plot
+
+# Initial Graph Data
+x = np.linspace(0, 5, 100)
+y = np.zeros(100)
 
 class RecordingTab(customtkinter.CTkFrame):
     def __init__(self, parent, width, height):
@@ -45,28 +52,94 @@ class RecordingTab(customtkinter.CTkFrame):
         self.rec_state = tk.StringVar()
         self.rec_state.set("Record")
 
+        # function label
+        self.functions_device = customtkinter.CTkLabel(self.options_frame, text="Functions that can be used without a device:", anchor="w")
+        self.functions_device.grid(row=8, column=0, padx=10, pady=10, sticky="w")
+
+        self.func_options = customtkinter.CTkOptionMenu(master=self.options_frame,
+                                       values=["None", "Sine", "Cosine", "Tangent"],
+                                       command=self.set_func)
+
+        self.func_options.grid(row=9, column=0, padx=15, pady=15, sticky="e")
+        self.func_options.set("None")
+
         # recording button
         self.record_button = customtkinter.CTkButton(
             master=self.options_frame, 
             text=self.rec_state.get(), 
             command=self.record_button_clicked)
 
-        self.record_button.grid(row=8, column=8, padx=15, pady=15, sticky="e")
+        self.record_button.grid(row=10, column=8, padx=15, pady=15, sticky="e")
+
+        # Beginning of graphing frame
 
         self.graph_frame = customtkinter.CTkFrame(parent.tablists.recording_tab)
 
-        # Graphing label
-        self.device_has_connection_label = customtkinter.CTkLabel(self.graph_frame, text="Recordings of Graphs", anchor="w")
-        self.device_has_connection_label.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+        # Scrollbar
 
+        self.canvas = tk.Canvas(self.graph_frame)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        self.scrollbar = ttk.Scrollbar(self.graph_frame, orient=tk.VERTICAL, command=self.canvas.yview)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+
+        # create another frame inside the canvas
+
+        self.graphs = ttk.Frame(self.canvas)
+
+        # add frame to canvas
+
+        self.canvas.create_window((0, 0), window=self.graphs, anchor="nw")
+
+        self.eeg_graph = Plot( self.graphs, "EEG Readings", "Time (seconds)", "Units", x, y)
+
+        self.eeg_graph.grid(row=1, column=0, padx=15, pady=15, sticky="e")
+
+        self.ec_graph = Plot( self.graphs, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
+
+        self.ec_graph.grid(row=2, column=0, padx=15, pady=15, sticky="e")
+
+        # Two sides packed into the window
         self.options_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         self.graph_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
+    
+    def update_graphs(self):
+        if self.rec_state.get() == "Recording...":
+            data = self.parent.controller.get_data()
+            x = data[0]
+            y = data[1]
+
+            if self.eeg_check.get():
+                self.eeg_graph.destroy()
+
+                self.eeg_graph = Plot( self.graphs, "EEG Readings", "Time (seconds)", "Units", x, y)
+
+                self.eeg_graph.grid(row=1, column=0, padx=15, pady=15, sticky="e")
+
+            if self.ec_check.get():
+                self.ec_graph.destroy()
+
+                self.ec_graph = Plot( self.graphs, "Electrochemical", "Time (seconds)", "Units", x, y)
+
+                self.ec_graph.grid(row=2, column=0, padx=15, pady=15, sticky="e")
+
+            self.graphs.after(1000, self.update_graphs)
+
+    def set_func(self, choice):
+        self.parent.controller.set_func(choice)
 
     def record_button_clicked(self):
         if self.parent.controller:
 
             if self.rec_state.get() == "Recording...":
-                print("Stopped Recording")
+                time_passed = self.parent.controller.stop_record()
+
+                data = self.parent.controller.get_data(end=True)
+                data_x = data[0]
+                data_y = data[1]
                 self.rec_state.set("Record")
                 # recording button
                 self.record_button.destroy()
@@ -75,10 +148,25 @@ class RecordingTab(customtkinter.CTkFrame):
                 master=self.options_frame, 
                 text=self.rec_state.get(), 
                 command=self.record_button_clicked)
-                self.record_button.grid(row=8, column=8, padx=15, pady=15, sticky="e")
+                self.record_button.grid(row=10, column=8, padx=15, pady=15, sticky="e")
+
+                if self.eeg_check.get():
+                    self.eeg_graph.destroy()
+
+                    self.eeg_graph = Plot( self.graphs, "EEG Readings", "Time (seconds)", "Units", data_x, data_y)
+
+                    self.eeg_graph.grid(row=1, column=0, padx=15, pady=15, sticky="e")
+
+
+                if self.ec_check.get():
+                    self.ec_graph.destroy()
+
+                    self.ec_graph = Plot( self.graphs, "Electrochemical", "Time (seconds)", "Units", data_x, data_y)
+
+                    self.ec_graph.grid(row=2, column=0, padx=15, pady=15, sticky="e")
 
             else: 
-                print("Started recording...")
+                self.parent.controller.record(self.frequency)
                 self.rec_state.set("Recording...")
                 # recording button
                 self.record_button.destroy()
@@ -88,5 +176,7 @@ class RecordingTab(customtkinter.CTkFrame):
                 text=self.rec_state.get(), 
                 command=self.record_button_clicked,
                 bg_color="GREEN")
-                self.record_button.grid(row=8, column=8, padx=15, pady=15, sticky="e")
+                self.record_button.grid(row=10, column=8, padx=15, pady=15, sticky="e")
+
+                self.update_graphs()
         

@@ -1,3 +1,4 @@
 .vscode
 gui/venv
 gui/__pycache__/
+gui/components/__pycache__/
