@@ -120,7 +120,7 @@ class RecordingTab(customtkinter.CTkFrame):
 
                 self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
 
-            self.graphs.after(1000, self.update_graphs)
+            self.graphs.after(1, self.update_graphs)
 
     def set_func(self, choice):
         self.parent.controller.set_func(choice)
@@ -139,7 +139,7 @@ class RecordingTab(customtkinter.CTkFrame):
             if self.rec_state.get() == "Recording...":
                 time_passed = self.parent.controller.stop_record()
 
-                data = self.parent.controller.get_data(end=True)
+                data = self.parent.controller.get_data()
                 data_x = data[0]
                 data_y = data[1]
                 self.rec_state.set("Record")
@@ -153,11 +153,11 @@ class RecordingTab(customtkinter.CTkFrame):
                 self.record_button.grid(row=10, column=8, padx=15, pady=15, sticky="e")
 
                 if self.eeg_check.get():
-                    self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, "EEG Readings", "Time (seconds)", "Units", x, y)
+                    self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, "EEG Readings", "Time (seconds)", "Units", data_x, data_y)
 
 
                 if self.ec_check.get():
-                    self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
+                    self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", data_x, data_y)
 
             else: 
                 self.parent.controller.record(self.frequency)

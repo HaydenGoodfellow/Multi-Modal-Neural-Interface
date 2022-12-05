@@ -26,8 +26,8 @@ class Controller:
         return self.current_time - self.past_time
 
     # pulls data from that second
-    def get_data(self, end=False):
-        time_passed = int(time.time() - self.past_time)
+    def get_data(self):
+        seconds_passed = int(time.time() - self.past_time)
 
         freq = int(self.frequency.get())
 
@@ -36,15 +36,12 @@ class Controller:
 
         x_data = None
         y_data = None
-        
-        if end:
-            
-            float_time_passed = time.time() - self.past_time - time_passed
-            ratio_freq_remainder += int(float_time_passed * freq)
+    
+        float_time_passed = time.time() - self.past_time - seconds_passed
+        ratio_freq_remainder += int(float_time_passed * freq)
 
 
-
-        x_data = np.linspace(0, time_passed + float_time_passed, freq * time_passed + ratio_freq_remainder)
+        x_data = np.linspace(0, seconds_passed + float_time_passed, freq * seconds_passed + ratio_freq_remainder)
 
         if self.function == "Sine":
             y_data = np.sin(x_data)
@@ -53,7 +50,7 @@ class Controller:
         elif self.function == "Tangent":
             y_data = np.tan(x_data)
         else:
-            y_data = np.zeros(freq * time_passed + ratio_freq_remainder)
+            y_data = np.zeros(freq * seconds_passed + ratio_freq_remainder)
 
 
         return (x_data, y_data)
