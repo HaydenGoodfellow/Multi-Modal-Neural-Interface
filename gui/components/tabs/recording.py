@@ -113,23 +113,25 @@ class RecordingTab(customtkinter.CTkFrame):
             y = data[1]
 
             if self.eeg_check.get():
-                self.eeg_graph.destroy()
 
-                self.eeg_graph = Plot( self.graphs, "EEG Readings", "Time (seconds)", "Units", x, y)
-
-                self.eeg_graph.grid(row=1, column=0, padx=15, pady=15, sticky="e")
+                self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, "EEG Readings", "Time (seconds)", "Units", x, y)
 
             if self.ec_check.get():
-                self.ec_graph.destroy()
 
-                self.ec_graph = Plot( self.graphs, "Electrochemical", "Time (seconds)", "Units", x, y)
-
-                self.ec_graph.grid(row=2, column=0, padx=15, pady=15, sticky="e")
+                self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
 
             self.graphs.after(1000, self.update_graphs)
 
     def set_func(self, choice):
         self.parent.controller.set_func(choice)
+
+    def update_plot(self, canvas, axes, title, x, y, x_data, y_data):
+        axes.clear()
+        axes.plot(x_data, y_data)
+        axes.set_title(title)
+        axes.set_xlabel(x)
+        axes.set_ylabel(y)
+        canvas.draw()
 
     def record_button_clicked(self):
         if self.parent.controller:
@@ -151,19 +153,11 @@ class RecordingTab(customtkinter.CTkFrame):
                 self.record_button.grid(row=10, column=8, padx=15, pady=15, sticky="e")
 
                 if self.eeg_check.get():
-                    self.eeg_graph.destroy()
-
-                    self.eeg_graph = Plot( self.graphs, "EEG Readings", "Time (seconds)", "Units", data_x, data_y)
-
-                    self.eeg_graph.grid(row=1, column=0, padx=15, pady=15, sticky="e")
+                    self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, "EEG Readings", "Time (seconds)", "Units", x, y)
 
 
                 if self.ec_check.get():
-                    self.ec_graph.destroy()
-
-                    self.ec_graph = Plot( self.graphs, "Electrochemical", "Time (seconds)", "Units", data_x, data_y)
-
-                    self.ec_graph.grid(row=2, column=0, padx=15, pady=15, sticky="e")
+                    self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
 
             else: 
                 self.parent.controller.record(self.frequency)

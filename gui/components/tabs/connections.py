@@ -18,4 +18,4 @@ class ConnectionsTab(customtkinter.CTkFrame):
 
         self.connect_button.grid(row=10, columnspan=16, padx=30, pady=30, sticky="e")
 
-        self.pack(padx=15, pady=15)
+        self.pack(padx=15, pady=15, fill=tk.BOTH, expand=1)
