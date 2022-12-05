@@ -93,12 +93,19 @@ class RecordingTab(customtkinter.CTkFrame):
         # add frame to canvas
 
         self.canvas.create_window((0, 0), window=self.graphs, anchor="nw")
+        self.eeg_name = "EEG Readings"
+        self.eeg_x = "Time (seconds)"
+        self.eeg_y = "Units"
 
-        self.eeg_graph = Plot( self.graphs, "EEG Readings", "Time (seconds)", "Units", x, y)
+        self.eeg_graph = Plot( self.graphs, self.eeg_name, self.eeg_x, self.eeg_y, x, y)
 
         self.eeg_graph.grid(row=1, column=0, padx=15, pady=15, sticky="e")
 
-        self.ec_graph = Plot( self.graphs, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
+        self.ec_name = "FSCV Readings"
+        self.ec_x = "Time (seconds)"
+        self.ec_y = "Units"
+
+        self.ec_graph = Plot( self.graphs, self.ec_name, self.ec_x, self.ec_y, x, y)
 
         self.ec_graph.grid(row=2, column=0, padx=15, pady=15, sticky="e")
 
@@ -114,11 +121,11 @@ class RecordingTab(customtkinter.CTkFrame):
 
             if self.eeg_check.get():
 
-                self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, "EEG Readings", "Time (seconds)", "Units", x, y)
+                self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, self.eeg_name, self.eeg_x, self.eeg_y, x, y)
 
             if self.ec_check.get():
 
-                self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", x, y)
+                self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, self.ec_name, self.ec_x, self.ec_y, x, y)
 
             self.graphs.after(1, self.update_graphs)
 
@@ -153,11 +160,11 @@ class RecordingTab(customtkinter.CTkFrame):
                 self.record_button.grid(row=10, column=8, padx=15, pady=15, sticky="e")
 
                 if self.eeg_check.get():
-                    self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, "EEG Readings", "Time (seconds)", "Units", data_x, data_y)
+                    self.update_plot(self.eeg_graph.figure_canvas, self.eeg_graph.axes, self.eeg_name, self.eeg_x, self.eeg_y, data_x, data_y)
 
 
                 if self.ec_check.get():
-                    self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, "Electrochemical Readings", "Time (seconds)", "Units", data_x, data_y)
+                    self.update_plot(self.ec_graph.figure_canvas, self.ec_graph.axes, self.ec_name, self.ec_x, self.ec_y, data_x, data_y)
 
             else: 
                 self.parent.controller.record(self.frequency)
